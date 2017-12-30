@@ -1,4 +1,6 @@
 #include "Scheduler.h"
+#include"ID_Manager.h"
+#include"ProcessManagement.h"
 
 //Proces ktory aktualnie posiada procesor 
 Process *runningProcess;
