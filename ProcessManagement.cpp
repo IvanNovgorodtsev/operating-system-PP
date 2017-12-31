@@ -3,7 +3,10 @@
 #include<list>
 
 
-
+void PCB::print()
+{
+	std::cout << "Proces: " << name << ", identyfikator: " << ID << ", rejestry A: " << A << ", B: " << B << ", C: " << C << ", D: " << D << ", command counter: "<< commandCounter << std::endl;
+}
 
 void ProcessManagement::CreateProcess(std::string name, std::string Path)
 {
@@ -18,17 +21,31 @@ void ProcessManagement::CreateProcess(std::string name, std::string Path)
 	temp.commandCounter = 0;
 	temp.state = PCB::processState::ready;
 	Processes.push_back(temp);
+
 }
 
 void ProcessManagement::DeleteProcess(int ID)
 {
+	if (ID == 0)
+	{
+		std::cout << "Nie mozna usunac procesu bezczynnosci" << std::endl;
+	}
+	bool deleted = 0;
 	for (std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter)
 	{
 		if (iter->ID == ID)
 		{
-
+			ID_Manager.ClearID(ID);
+			Processes.erase(iter);
+			deleted = 1;
+			break;
 		}
 	}
+	if (!deleted)
+	{
+		std::cout << "Proces o podanym ID nie istnieje" << std::endl;
+	}
+
 }
 
 PCB::processState ProcessManagement::GetState(int ID)
@@ -37,7 +54,7 @@ PCB::processState ProcessManagement::GetState(int ID)
 	{
 		if (iter->ID == ID)
 		{
-			return 
+			return iter->state;
 		}
 	}
 }
@@ -49,6 +66,17 @@ void ProcessManagement::SetState(int ID, PCB::processState newState)
 		if (iter->ID == ID)
 		{
 			iter->state = newState;
+		}
+	}
+}
+
+void ProcessManagement::print(int ID)
+{
+	for (std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter)
+	{
+		if (iter->ID == ID)
+		{
+			iter->print();
 		}
 	}
 }

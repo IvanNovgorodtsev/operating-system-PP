@@ -1,4 +1,6 @@
 #pragma once
+#include<ostream>
+#include<iostream>
 #include<string>
 #include<list>
 #include"ID_Manager.h"
@@ -6,7 +8,8 @@
 class PCB
 {
 public:
-	enum class processState {newbie, waiting, ready, active, finished};
+	enum processState {newbie, waiting, ready, active, finished};
+
 	std::string name;
 	int ID;
 	processState state;
@@ -18,6 +21,7 @@ public:
 	int C;
 	int D;
 
+	void print();
 };
 
 
@@ -29,12 +33,10 @@ public:
 	ID_Manager ID_Manager;
 
 	void CreateProcess(std::string Name, std::string Path);
-	//std::list<PCB>::iterator ProcessManagement::FindProcessIndex(int ID);
 	void DeleteProcess(int ID);
-	//int FindProcessIndex(int ID);
-	//int GetState(int ID);
 	PCB::processState ProcessManagement::GetState(int ID);
 	void ProcessManagement::SetState(int ID, PCB::processState newState);
+	void print(int ID);
 	int GetBasePriority(int ID);
 	int GetCurrentPriority(int ID); 
 	void SetPriority(int ID, int Priority);
