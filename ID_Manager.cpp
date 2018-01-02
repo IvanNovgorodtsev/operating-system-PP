@@ -1,7 +1,7 @@
 #include<iostream>
 #include "ID_Manager.h"
 
-
+//Wybór pierwszego wolnego identyfikatora
 int ID_Manager::PickID()
 {
 	for (int i = 0; i < AmountOfID; i++)
@@ -16,6 +16,7 @@ int ID_Manager::PickID()
 	return -1;
 }
 
+//Zwolnienie podanego identyfikatora
 void ID_Manager::ClearID(int ID)
 {
 	FreeIdArray[ID] = 0;

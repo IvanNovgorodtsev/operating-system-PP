@@ -9,10 +9,10 @@ class PCB
 {
 public:
 	enum processState {newbie, waiting, ready, active, finished};
-
 	std::string name;
 	int ID;
 	processState state;
+	bool blocked;
 	int priority;
 	int basePriority;
 	int commandCounter;
@@ -20,7 +20,6 @@ public:
 	int B;
 	int C;
 	int D;
-
 	void print();
 };
 
@@ -29,10 +28,16 @@ class ProcessManagement
 {
 private:
 	std::list<PCB> Processes;
+	void addFirstProcess();
 public:
 	ID_Manager ID_Manager;
-
+	ProcessManagement()
+	{
+		addFirstProcess();
+	}
 	void CreateProcess(std::string Name, std::string Path);
+	void CreateEmptyProcess(std::string Name);
+
 	void DeleteProcess(int ID);
 	PCB::processState ProcessManagement::GetState(int ID);
 	void ProcessManagement::SetState(int ID, PCB::processState newState);
@@ -46,4 +51,7 @@ public:
 	void SetCommandCounter(int ID, int Val);
 	std::string getNameFromId(int ID);
 	int getIdFromName(std::string name);
+	void Sleep(int ID);
+	void WakeUp(int ID);
+	PCB* getPCB(int ID);
 };
