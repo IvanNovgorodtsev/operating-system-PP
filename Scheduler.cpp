@@ -1,3 +1,4 @@
+//po co to jak jest ni¿ej
 #include "Scheduler.h"
 
 #pragma once
