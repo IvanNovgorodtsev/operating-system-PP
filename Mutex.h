@@ -4,18 +4,18 @@
 
 class Mutex {
 private:
-    std::vector<Process*> waiting_proceses;
-    Process* using_process;
+    std::vector<PCB*> waiting_proceses;
+    PCB* using_process;
 	bool is_lock;
 public:
     Mutex();
     ~Mutex();
 
-    void lock(Process& process);
-    bool try_lock(Process& process);
-    void unlock(Process& process);
+    void lock(PCB& process);
+    bool try_lock(PCB& process);
+    void unlock(PCB& process);
 
-    std::vector<Process*>& getWaitingProcess();
-    Process& getUsingProcess();
+    std::vector<PCB*>& getWaitingProcess();
+    PCB& getUsingProcess();
     bool isBlock();
 };

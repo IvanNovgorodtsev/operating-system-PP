@@ -4,9 +4,10 @@ Mutex::Mutex() : using_process(), waiting_processes(), is_lock(false) {}
 
 Mutex::~Mutex() {  }
 
-void Mutex::lock(std::string &process) {
+void Mutex::lock(PCB &process) {
     if (proces_uzytkowy != nullptr && is_lock == true) {
 		waiting_processes.push_back(&process);
+		process->sleep();
 	}
     else {
         using_process = &process;
@@ -14,7 +15,7 @@ void Mutex::lock(std::string &process) {
     }
 }
 
-bool Mutex::try_lock(std::string &process) {
+bool Mutex::try_lock(PCB &process) {
     if (using_process == nullptr && is_lock == false) {
         using_process = &process;
 		is_lock = true;
@@ -23,7 +24,7 @@ bool Mutex::try_lock(std::string &process) {
     return false;
 }
 
-void Mutex::unlock(Process &process) {
+void Mutex::unlock(PCB &process) {
     if(using_process == &process && is_lock == true) {
         using_process = nullptr;
 		is_lock = false;
@@ -31,15 +32,16 @@ void Mutex::unlock(Process &process) {
             using_process = (waiting_processes[0]);
             waiting_processes.erase(waiting_processes.begin());
 			is_lock = true;
+		using_process->wakeup();
         }
     }
 }
 
-Process & Mutex::getUsingProcess() {
+PCB & Mutex::getUsingProcess() {
     return &using_process;
 }
 
-std::vector<Process *> & Mutex::getWaitingProcesses() {
+std::vector<PCB *> & Mutex::getWaitingProcesses() {
     return &waiting_processes;
 }
 
