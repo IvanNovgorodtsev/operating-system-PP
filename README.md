@@ -1,4 +1,6 @@
 # operating system PP:
+## Zarządzanie procesorem
+Autor: Stanisław Fiuta
 ## Metody synchronizacji: Mutex Locks
 Autor: Andrzej Dybowski
 ## System plików: Fat
