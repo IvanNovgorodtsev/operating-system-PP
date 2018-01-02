@@ -6,7 +6,7 @@ Mutex::~Mutex() {}
 
 void Mutex::lock(PCB &process) {
 	if(using_process != nullptr && is_lock == true) {
-		process->sleep();
+		process.sleep();
 		waiting_processes.push_back(&process);
 	}
 	else {

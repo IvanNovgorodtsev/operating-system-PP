@@ -15,7 +15,7 @@ public:
 	bool try_lock(PCB& process);
 	void unlock(PCB& process);
 
-	std::vector<PCB*>* getWaitingProcess();
+	std::vector<PCB*>* getWaitingProcesses();
 	PCB* getUsingProcess();
 	bool isBlock();
 
