@@ -35,11 +35,11 @@ void Mutex::unlock(Process &process) {
     }
 }
 
-std::string & Mutex::getProcesUzytkowy() {
+Process & Mutex::getUsingProcess() {
     return &using_process;
 }
 
-std::vector<std::string *> & Mutex::getProcesyOczekujace() {
+std::vector<Process *> & Mutex::getWaitingProcesses() {
     return &waiting_processes;
 }
 
