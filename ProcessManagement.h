@@ -44,4 +44,6 @@ public:
 	void SetReg(int ID, char reg, int Value);
 	int GetCommandCounter(int ID); 
 	void SetCommandCounter(int ID, int Val);
+	std::string getNameFromId(int ID);
+	int getIdFromName(std::string name);
 };

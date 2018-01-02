@@ -90,6 +90,7 @@ int ProcessManagement::GetBasePriority(int ID)
 			return iter->basePriority;
 		}
 	}
+	return -1;
 }
 
 int ProcessManagement::GetCurrentPriority(int ID)
@@ -101,6 +102,7 @@ int ProcessManagement::GetCurrentPriority(int ID)
 			return iter->priority;
 		}
 	}
+	return -1;
 }
 
 void ProcessManagement::SetPriority(int ID, int Priority)
@@ -185,6 +187,7 @@ int ProcessManagement::GetCommandCounter(int ID)
 			return iter->commandCounter;
 		}
 	}
+	return -1;
 }
 
 void ProcessManagement::SetCommandCounter(int ID, int Val)
@@ -196,4 +199,28 @@ void ProcessManagement::SetCommandCounter(int ID, int Val)
 			iter->commandCounter = Val;
 		}
 	}
+}
+
+std::string ProcessManagement::getNameFromId(int ID)
+{
+	for (std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter)
+	{
+		if (iter->ID == ID)
+		{
+			return iter->name;
+		}
+	}
+		return "err";
+}
+
+int ProcessManagement::getIdFromName(std::string name)
+{
+	for (std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter)
+	{
+		if (iter->name == name)
+		{
+			return iter->ID;
+		}
+	}
+	return -1;
 }
