@@ -38,11 +38,11 @@ void Mutex::unlock(PCB &process) {
 	}
 }
 
-PCB & Mutex::getUsingProcess() {
-	return &using_process;
+PCB* Mutex::getUsingProcess() {
+	return using_process;
 }
 
-std::vector<PCB *> & Mutex::getWaitingProcesses() {
+std::vector<PCB *>* Mutex::getWaitingProcesses() {
 	return &waiting_processes;
 }
 

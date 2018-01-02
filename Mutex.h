@@ -1,5 +1,5 @@
 #pragma once
-#include "Process.h"
+#include "ProcessManagement.h"
 #include <vector>
 
 class Mutex {
@@ -15,8 +15,8 @@ public:
 	bool try_lock(PCB& process);
 	void unlock(PCB& process);
 
-	std::vector<PCB*>& getWaitingProcess();
-	PCB& getUsingProcess();
+	std::vector<PCB*>* getWaitingProcess();
+	PCB* getUsingProcess();
 	bool isBlock();
 
 	std::string toString();
