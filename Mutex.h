@@ -19,5 +19,5 @@ public:
 	PCB& getUsingProcess();
 	bool isBlock();
 
-
+	std::string toString();
 };

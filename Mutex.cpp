@@ -48,3 +48,7 @@ std::vector<PCB *> & Mutex::getWaitingProcesses() {
 bool Mutex::isBlock() {
 	return !is_lock;
 }
+
+std::string Mutex::toString() {
+	return "Zamek " + ((is_lock) ? ("zamkniety przez proces " + using_process->name + ";" + ((waiting_processes.size() > 0) ? ("ilosc oczekujacych procesow: " + waiting_processes.size() + ";") : "")) : "otwarty");
+}
