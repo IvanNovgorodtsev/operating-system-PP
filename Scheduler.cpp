@@ -253,12 +253,12 @@ void Scheduler::assignProcessor() // arg Interpreter &inter
 			reschedProcess();
 		}
 
-		// runningProcess.decRestTime();
+		runningProcess.decRestTime();
 
 		if (runningProcess.getRestTime() == 0)
 		{
-			if (runningProcess.process->priority != 15) terminated(runningProcess);
-
+			 terminated(runningProcess);
+			 chooseProcess();
 		}
 
 		incWaitingTime();
