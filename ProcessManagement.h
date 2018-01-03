@@ -4,26 +4,7 @@
 #include<string>
 #include<list>
 #include"ID_Manager.h"
-
-class PCB {
-public:
-	enum processState { newbie, waiting, ready, active, finished };
-	std::string name;
-	int ID;
-	processState state;
-	bool blocked;
-	int priority;
-	int basePriority;
-	int commandCounter;
-	int A;
-	int B;
-	int C;
-	int D;
-	void print();
-	void sleep();
-	void wakeup();
-	void setState(PCB::processState newState);
-};
+#include "PCB.h"
 
 
 class ProcessManagement {
@@ -39,8 +20,8 @@ public:
 	void CreateEmptyProcess(std::string Name);
 
 	void DeleteProcess(int ID);
-	PCB::processState ProcessManagement::GetState(int ID);
-	void ProcessManagement::SetState(int ID, PCB::processState newState);
+	PCB::processState GetState(int ID);
+	void SetState(int ID, PCB::processState newState);
 	void print(int ID);
 	int GetBasePriority(int ID);
 	int GetCurrentPriority(int ID);
