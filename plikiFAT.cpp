@@ -221,11 +221,13 @@ void Disc::wyswietlaPliki()
 	std::cout << "  Directory of root:" << std::endl;
 
 	std::cout << "Nazwa ", "Rozmiar ", "Pierwszy Jap ", "  ", " \t ";
+	std::cout << std::endl;
 	for (int i = 0; i < 64; i++)
 	{
 		if (atrybuty[i].status == true)
 		{
 			std::cout << atrybuty[i].nazwa, " \t ", atrybuty[i].rozmiar, "\t" + atrybuty[i].jap1, " \t ";
+			std::cout << std::endl;
 			l++;
 			allsize += atrybuty[i].rozmiar;
 		}
