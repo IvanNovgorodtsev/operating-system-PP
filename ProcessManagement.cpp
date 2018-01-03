@@ -4,23 +4,46 @@
 
 //Tworzenie nowego pola PCB
 void ProcessManagement::CreateProcess(std::string Name, std::string Path, int BasePriority) {
-	int ID = ID_Manager.PickID();
-	PCB temp;
-	temp.state = PCB::processState::newbie;
-	temp.name = Name;
-	temp.ID = ID;
-	temp.A = 0;
-	temp.B = 0;
-	temp.C = 0;
-	temp.D = 0;
-	temp.basePriority = BasePriority;
-	temp.commandCounter = 0;
-	temp.blocked = 0;
-	temp.setState(PCB::processState::ready);
-	Processes.push_back(temp);
+	if (CheckNameUniqe(Name))
+	{
+		//B£¥D, POWIELONA NAZWA
+	//	std::cout << "powielona nazwa procesu" << std::endl;
+	}
+	else
+	{
+		int ID = ID_Manager.PickID();
+		PCB temp;
+		temp.state = PCB::processState::newbie;
+		temp.name = Name;
+		temp.ID = ID;
+		temp.A = 0;
+		temp.B = 0;
+		temp.C = 0;
+		temp.D = 0;
+		temp.basePriority = BasePriority;
+		temp.commandCounter = 0;
+		temp.blocked = 0;
+		//temp.setState(PCB::processState::ready);
+		Processes.push_back(temp);
+		SetState(ID, PCB::processState::ready);
+	}
+
 	//TRZEBA JAKOŒ DODAC KOD PROGRAMU DO RAMU
-	//PATH OD MODU£U FAT
+	//PATH - NAZWA LUB SCIEZKA PLIKU ZRODLOWEGO
+
 }
+
+bool ProcessManagement::CheckNameUniqe(std::string Name)
+{
+	for (std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter) {
+		if (iter->name == Name)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
 //Tworzenie procesu bezczynnoœci
 void ProcessManagement::addFirstProcess(std::string path)
 {
@@ -36,9 +59,9 @@ void ProcessManagement::addFirstProcess(std::string path)
 	temp.basePriority = 0;
 	temp.commandCounter = 0;
 	temp.blocked = 0;
-	temp.setState(PCB::processState::ready);
 	Processes.push_back(temp);
-	//scheduler.addFirstProcess(this->getPCB(0));
+	temp.state = PCB::processState::ready;
+	scheduler.addFirstProcess(this->getPCB(0));
 	//TRZEBA JAKOŒ DODAC KOD PROGRAMU DO RAMU
 }
 
@@ -86,11 +109,13 @@ void ProcessManagement::SetState(int ID, PCB::processState newState) {
 				}
 				else
 				{
-					iter->state = newState;
+					//sprawdzanie czy proces nie ma stanu gotowy
 					if (iter->state != PCB::processState::ready)
 					{
 						scheduler.addProcess(this->getPCB(ID));
 					}
+					//nadawanie nowego stanu
+					iter->state = newState;
 					
 				}
 				break;

@@ -26,5 +26,5 @@ public:
 	void print();
 	void sleep();
 	void wakeup();
-	void setState(PCB::processState newState);
+	//void setState(PCB::processState newState);
 };

@@ -19,8 +19,6 @@ public:
 	}
 
 	ID_Manager ID_Manager;
-	
-	//void CreateEmptyProcess(std::string Name);
 	PCB::processState GetState(int ID);
 	void SetState(int ID, PCB::processState newState);
 	void print(int ID);
@@ -33,6 +31,7 @@ public:
 	void SetCommandCounter(int ID, int Val);
 	std::string getNameFromId(int ID);
 	int getIdFromName(std::string name);
+	bool CheckNameUniqe(std::string name);
 
 	PCB* getPCB(int ID);
 
