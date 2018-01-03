@@ -1,8 +1,11 @@
+#define _CRT_SECURE_NO_WARNINGS
 #pragma once
 
 #include <string>
 #include <iostream>
 #include <math.h>
+
+
 
 class Tab_Fat {
 public:
@@ -26,8 +29,8 @@ public:
 	int fat[64];					//tablica fat 64 bity
 	Tab_Fat atrybuty[64];		//wpis do katlogu glownego
 	int spacefree = rozmiarDysku;						//wlne miejsce`
-	
-	
+
+
 	Disc();
 	void wys();
 	void tworzeniaPliku(std::string nazwa);
