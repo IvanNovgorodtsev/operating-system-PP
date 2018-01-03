@@ -18,7 +18,6 @@ void ProcessManagement::CreateProcess(std::string Name, std::string Path, int Ba
 	temp.blocked = 0;
 	temp.setState(PCB::processState::ready);
 	Processes.push_back(temp);
-	scheduler.addProcess(this->getPCB(ID));
 	//TRZEBA JAKOŒ DODAC KOD PROGRAMU DO RAMU
 	//PATH OD MODU£U FAT
 }
@@ -39,14 +38,14 @@ void ProcessManagement::addFirstProcess(std::string path)
 	temp.blocked = 0;
 	temp.setState(PCB::processState::ready);
 	Processes.push_back(temp);
-	scheduler.addFirstProcess(this->getPCB(0));
+	//scheduler.addFirstProcess(this->getPCB(0));
 	//TRZEBA JAKOŒ DODAC KOD PROGRAMU DO RAMU
 }
 
 //Usuwanie wybranego procesu z listy procesów
 void ProcessManagement::DeleteProcess(int ID) {
 	if(ID == 0) {
-		std::cout << "Nie mozna usunac procesu bezczynnosci" << std::endl;
+		//B£¥D NIE MOZNA USUNAC PROCESU BEZCZYNNOSCI
 	}
 	else {
 		bool deleted = 0;
@@ -60,7 +59,6 @@ void ProcessManagement::DeleteProcess(int ID) {
 		}
 		if(!deleted) {
 			//B£¥D, BRAK PROCESU O PODANYM ID
-			//std::cout << "Proces o podanym ID nie istnieje" << std::endl;
 		}
 	}
 }
@@ -72,15 +70,40 @@ PCB::processState ProcessManagement::GetState(int ID) {
 		}
 	}
 }
+
 //Nadawanie stanu procesu
 void ProcessManagement::SetState(int ID, PCB::processState newState) {
 	for(std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter) {
-		if(iter->ID == ID) {
-			iter->setState(newState);
+		if(iter->ID == ID) 
+		{
+			switch (newState)
+			{
+			case PCB::processState::ready:
+				if (iter->blocked)
+				{
+					break;
+					//nie mo¿na nadaæ stanu ready zablokowaneu procesowi
+				}
+				else
+				{
+					iter->state = newState;
+					if (iter->state != PCB::processState::ready)
+					{
+						scheduler.addProcess(this->getPCB(ID));
+					}
+					
+				}
+				break;
+
+			default:
+				iter->state = newState;
+				break;
+			}
 			break;
 		}
 	}
 }
+
 //Drukowanie zawartoœci PCB procesu o podanym ID
 void ProcessManagement::print(int ID) {
 	for(std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter) {

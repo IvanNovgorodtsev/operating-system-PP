@@ -15,10 +15,5 @@ void PCB::wakeup() {
 }
 
 void PCB::setState(PCB::processState newState) {
-	if (newState == PCB::processState::ready && this->blocked) {
-		//nie mo¿na nadaæ stanu ready zablokowaneu procesowi
-	}
-	else {
-		this->state = newState;
-	}
+
 }
