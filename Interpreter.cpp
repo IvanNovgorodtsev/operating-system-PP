@@ -3,7 +3,7 @@
 #include<vector>
 #define MAKSYMALNY_PRIORYTET 15
 // TYMCZASOWE GLOBALNE ZMIENNE
-int RejestrA=5, RejestrB=5, RejestrC=0, RejestrD=0;
+int RejestrA=0, RejestrB=0, RejestrC=0, RejestrD=0;
 int LicznikRozkazow=0;
 
 //
@@ -42,18 +42,17 @@ bool Interpreter::isLabel(string &program)
 		return false;
 	}
 }
-bool Interpreter::run(/*Process RUNNING*/)
+bool Interpreter::run(string &program/*Process RUNNING*/)
 {
-	int label;
+	int label=0;
 	bool koniec = true;
 	// PCBbox= RUNNING.getPCB(); // aktualny box procesu, mozemy wyciagnac nazwe, id itd
-	string program = "LABEL:"; // rozkaz pobierany z ramu
 	// program = ram.pobierzRozkaz(RUNNING.GetName());
 	if (!program.size())
 	{
 		cout << "Nie udalo sie pobrac rozkazu!" << endl;
 	}
-	else if (isLabel(program))
+	if (isLabel(program))
 	{
 		label = LicznikRozkazow;
 		LicznikRozkazow += program.size();
@@ -115,7 +114,7 @@ bool Interpreter::run(/*Process RUNNING*/)
 				else if (program.substr(3, 1) == "D")
 				{
 					// processmanagement.SetReg(PCBbox.ID, 'D', processmanagement.GetReg(PCBbox.ID, 'D')+liczba);
-					RejestrC += liczba;
+					RejestrD += liczba;
 				}
 			}
 			else
@@ -174,6 +173,11 @@ bool Interpreter::run(/*Process RUNNING*/)
 					RejestrA *= RejestrC;
 					// processmanagement.SetReg(PCBbox.ID, 'A', processmanagement.GetReg(PCBbox.ID, 'A')*processmanagement.GetReg(PCBbox.ID, 'C'));
 				}
+				else if (program.substr(3, 1) == "D")
+				{
+					RejestrA *= RejestrD;
+					// processmanagement.SetReg(PCBbox.ID, 'A', processmanagement.GetReg(PCBbox.ID, 'A')*processmanagement.GetReg(PCBbox.ID, 'C'));
+				}
 			}
 			else
 			{
@@ -229,6 +233,11 @@ bool Interpreter::run(/*Process RUNNING*/)
 					RejestrA = RejestrC;
 					// processmanagement.SetReg(PCBbox.ID, 'A', processmanagement.GetReg(PCBbox.ID, 'C'));
 				}
+				else if (program.substr(3, 1) == "D")
+				{
+					RejestrA = RejestrC;
+					// processmanagement.SetReg(PCBbox.ID, 'A', processmanagement.GetReg(PCBbox.ID, 'C'));
+				}
 			}
 			else
 			{
@@ -237,15 +246,13 @@ bool Interpreter::run(/*Process RUNNING*/)
 			break;
 		}
 		case JP:
-		{
-			// Obsluga bledu, czy rozkaz poprawny
-			int liczba;
-			if (RejestrD != 0/*processmanagement.GetReg(PCBbox.ID, 'D') != 0*/)
+		{	
+			if (RejestrD != 0) // processmanagement.GetReg(PCBbox.ID, 'D') != 0
 			{
 				RejestrD--;
 				//processmanagement.SetReg
-				liczba = atoi(program.substr(3, program.size() - 3).c_str());
-				LicznikRozkazow = liczba;
+				// liczba = atoi(program.substr(3, program.size() - 3).c_str());
+				LicznikRozkazow = label;
 			}
 			break;
 		}
@@ -255,7 +262,7 @@ bool Interpreter::run(/*Process RUNNING*/)
 			{
 				string name;
 				name = program.substr(3, program.size() - 3).c_str();
-				// disc.tworzeniaPliku(name);
+				disc.tworzeniaPliku(name);
 			}
 			else
 			{
@@ -270,7 +277,7 @@ bool Interpreter::run(/*Process RUNNING*/)
 				string name, data;
 				name = program.substr(3, program.find(" ", 4) - 3).c_str(); // wyciagniecie nazwy z rozszerzeniem
 				data = program.substr(program.find(" ", 3) + 1, program.size() - program.find(" ", 4)).c_str(); // wyciagniecie danych
-				// disc.wpisywanieDoPliku(name,data);
+				disc.wpisywanieDoPliku(name,data);
 			}
 			else
 			{
@@ -282,10 +289,9 @@ bool Interpreter::run(/*Process RUNNING*/)
 		{
 			if (program.substr(2, 1) == " ")
 			{
-				// Obsluga bledu, czy rozkaz poprawny
 				string name;
 				name = program.substr(3, program.size() - 3).c_str();
-				// disc.usuwaniePliku(name);
+				disc.usuwaniePliku(name);
 			}
 			else
 			{
@@ -300,7 +306,7 @@ bool Interpreter::run(/*Process RUNNING*/)
 				string name, newname;
 				name = program.substr(3, program.find(" ", 4) - 3).c_str(); // wyciagniecie nazwy z rozszerzeniem
 				newname = program.substr(program.find(" ", 3) + 1, program.size() - program.find(" ", 4)).c_str(); // wyciagniecie danych
-				// disc.zmianaNazwy(name,data);
+				disc.zmianaNazwy(name,newname);
 			}
 			else
 			{
@@ -315,7 +321,7 @@ bool Interpreter::run(/*Process RUNNING*/)
 				string name, data;
 				name = program.substr(3, program.find(" ", 4) - 3).c_str(); // wyciagniecie nazwy z rozszerzeniem
 				data = program.substr(program.find(" ", 3) + 1, program.size() - program.find(" ", 4)).c_str(); // wyciagniecie danych
-				// disc.dopiszDoPliku(name,data);
+				disc.dopiszDoPliku(name,data);
 			}
 			else
 			{
@@ -431,7 +437,24 @@ Interpreter::Interpreter(/*RAM &ram, Dysk &dysk, ProcessManagement &processmanag
 
 int main()
 {
+	// Dzialanie JP nie moze byc sprawdzone, bo licznik rozkazow 
+	// nie zmienia rozkazu ktory jest wykonywany
+
+
 	Interpreter interpreter;
-	interpreter.run();
-	cout << RejestrA;
+	string program;
+	program = "AX D 5";
+	interpreter.run(program);
+	program = "AX A 1";
+	interpreter.run(program);
+	while (RejestrD != 0)
+	{
+		program = "SILNIA:";
+		interpreter.run(program);
+		program = "MU D";
+		interpreter.run(program);
+		program = "JP";
+		interpreter.run(program);
+	}
+	cout << RejestrA << endl;
 }

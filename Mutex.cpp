@@ -1,4 +1,5 @@
 #include "Mutex.h"
+#include <string>
 
 Mutex::Mutex() : using_process(), waiting_processes(), is_lock(false) {}
 
@@ -51,5 +52,15 @@ bool Mutex::isBlock() {
 }
 
 std::string Mutex::toString() {
-	return "Zamek " + ((is_lock) ? ("zamkniety przez proces " + using_process->name + ";" + ((waiting_processes.size() > 0) ? ("ilosc oczekujacych procesow: " + waiting_processes.size() + ";") : "")) : "otwarty");
+	std::string buffor = "Zamek";
+	if (is_lock) {
+		buffor += " zamkniety przez proces " + using_process->name + ";";
+		if (waiting_processes.size() > 0) {
+			buffor += " ilosc oczekujacych procesow: " + std::to_string(waiting_processes.size()) + ";";
+		}
+	}
+	else {
+		buffor += "otwarty";
+	}
+	return buffor;
 }
