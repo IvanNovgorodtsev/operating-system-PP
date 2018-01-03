@@ -134,6 +134,38 @@ void Scheduler::giveTime(Process &process)
 {
 	switch (process.process->priority)
 	{
+	case 0: {
+		process.setRestTime(16);
+		break;
+	}
+	case 1: {
+		process.setRestTime(15);
+		break;
+	}
+	case 2: {
+		process.setRestTime(14);
+		break;
+	}
+	case 3: {
+		process.setRestTime(13);
+		break;
+	}
+	case 4: {
+		process.setRestTime(12);
+		break;
+	}
+	case 5: {
+		process.setRestTime(11);
+		break;
+	}
+	case 6: {
+		process.setRestTime(10);
+		break;
+	}
+	case 7: {
+		process.setRestTime(9);
+		break;
+	}
 	case 8: {
 		process.setRestTime(8);
 		break;
