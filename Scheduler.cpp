@@ -398,12 +398,12 @@ void Scheduler::endOfEpoch()
 //METODY PRZEZNACZONE DO SHELLA
 void Scheduler::displayActiveProcesses()
 {
-	std::cout << "\t\tLista procesow aktywnych:" << std::endl;
+	std::cout << "Lista procesow aktywnych:" << std::endl;
 	auto copyActiveProcesses = activeProcesses;
 
 	for (auto e : copyActiveProcesses)
 	{
-		if (!e.empty()) std::cout << "\tProcesy o priorytecie " << e.front().process->priority << ":" << std::endl;
+		if (!e.empty()) std::cout << "Procesy o priorytecie " << e.front().process->priority << ":" << std::endl;
 		while (!e.empty())
 		{
 			auto process = e.front();
@@ -415,7 +415,7 @@ void Scheduler::displayActiveProcesses()
 }
 void Scheduler::displayTerminatedProcesses() {
 
-	std::cout << "\tLista procesow przeterminowanych:" << std::endl;
+	std::cout << "Lista procesow przeterminowanych:" << std::endl;
 	auto copyTerminatedProcesses = terminatedProcesses;
 
 	for (auto e : copyTerminatedProcesses)
@@ -431,7 +431,7 @@ void Scheduler::displayTerminatedProcesses() {
 	}
 }
 void Scheduler::displayActiveBitsMap() {
-	std::cout << "\tMapa bitowa procesow aktywnych:" << std::endl;
+	std::cout << "MB procesow aktywnych:  " ;
 	for (int i = 1; i < bitsMapActive.size() + 1; i++)
 	{
 		if (i % 4 == 0) {
@@ -444,7 +444,7 @@ void Scheduler::displayActiveBitsMap() {
 	std::cout << std::endl;
 }
 void Scheduler::displayTerminatedBitsMap() {
-	std::cout << "\tMapa bitowa procesow przeterminowanych:" << std::endl;
+	std::cout << "MB procesow przeterminowanych:" ;
 	for (int i = 1; i < bitsMapTerminated.size() + 1; i++)
 	{
 		if (i % 4 == 0) {
@@ -457,6 +457,6 @@ void Scheduler::displayTerminatedBitsMap() {
 	std::cout << std::endl;
 }
 void Scheduler::displayRunningProcess() {
-	std::cout << "Proces aktualnie posiadajacy procesor: " << runningProcess.process->name << " pozostaly kwant: " << runningProcess.getRestTime() << " i priorytecie " << runningProcess.process->priority<< std::endl;
+	std::cout << "Aktualnie posiadajacy procesor: " << runningProcess.process->name << " pozostaly kwant: " << runningProcess.getRestTime() << " i priorytecie " << runningProcess.process->priority<< std::endl;
 }
 
