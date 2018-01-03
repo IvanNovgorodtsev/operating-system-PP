@@ -1,4 +1,3 @@
-//po co to jak jest ni¿ej
 #include "Scheduler.h"
 
 #pragma once
@@ -48,17 +47,27 @@ void Scheduler::addProcess(PCB *process)
 	giveTime(newProcess);
 }
 
-//JAK TO ZROBIC KURWA MAC
+//Obliczanie priorytetu pierwszy raz
+void Scheduler::calculateCurrentPriority(Process &process) {
+	unsigned int rest = process.getRestTime(), waiting = process.getWaitingTime(), need = process.getAllNeedTime();
+	if (process.getWaitingTime > process.getAllNeedTime) {
+		if (process.process->priority > 8) {
+			process.process->priority--;
+		}
+	}
+}
+
 //Obliczanie aktualnego priorytetu (kazdorazowo po zakonczeniu kwantu czasu, przez proces)
-void Scheduler::calculateCurrentPriority(Process &process)
+void Scheduler::calculateFirstTimeCurrentPriority(Process &process)
 {
 	unsigned int rest = process.getRestTime(), waiting = process.getWaitingTime(), need = process.getAllNeedTime();
 
 	translate(process);
 
-	if (process.process->priority > 7)
-	{
-
+	if (process.getWaitingTime > process.getAllNeedTime) {
+		if (process.process->priority > 8) {
+			process.process->priority--;
+		}
 	}
 }
 
@@ -118,7 +127,7 @@ void Scheduler::translate(Process &process)
 	}
 }
 
-//UZUPELNIC DLUGOSC PROGRAMU
+//UZUPELNIC DLUGOSC PROGRAMU robi sie
 //Nadawanie kwantu czasu
 void Scheduler::giveTime(Process &process)
 {
@@ -195,9 +204,8 @@ void Scheduler::chooseProcess()
 	runningProcess = choice;
 }
 
-//FUNKCJA OD IVANA
 //Przydzial procesora do odpowiedniego procesu (procesor)
-void Scheduler::assignProcessor()
+void Scheduler::assignProcessor() // arg Interpreter &inter
 {
 	//Sprawdza czy nie trzeba zmienic procesu
 	if (needResched == 1)
@@ -212,8 +220,10 @@ void Scheduler::assignProcessor()
 		chooseProcess();
 	}
 
-	// WYKONUJE FUNKCJE OD IVANA
-
+	//if(!bool run(runningProcess.process)){ // na wszystkie funkcje nizej
+	//	delete(runningProcess.process);
+	//	}
+	//
 
 	unsigned int restTime = runningProcess.getRestTime();
 	restTime--;

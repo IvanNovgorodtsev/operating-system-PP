@@ -29,6 +29,7 @@ public:
 	Scheduler();
 	void addFirstProcess(PCB *process);
 	void addProcess(PCB *process);
+	void calculateFirstTimeCurrentPriority(Process &process);
 	void calculateCurrentPriority(Process &process);
 	void translate(Process &process);
 	void giveTime(Process &process);
