@@ -10,16 +10,17 @@
 class ProcessManagement {
 private:
 	std::list<PCB> Processes;
-	void addFirstProcess();
+	void addFirstProcess(std::string path);
+	Scheduler scheduler;
 public:
-	ID_Manager ID_Manager;
-	ProcessManagement() {
-		addFirstProcess();
+	ProcessManagement() 
+	{
+		addFirstProcess("SCIEZKA PROCESU BEZCZYNNOSCI");
 	}
-	void CreateProcess(std::string Name, std::string Path);
-	void CreateEmptyProcess(std::string Name);
 
-	void DeleteProcess(int ID);
+	ID_Manager ID_Manager;
+	
+	//void CreateEmptyProcess(std::string Name);
 	PCB::processState GetState(int ID);
 	void SetState(int ID, PCB::processState newState);
 	void print(int ID);
@@ -32,7 +33,14 @@ public:
 	void SetCommandCounter(int ID, int Val);
 	std::string getNameFromId(int ID);
 	int getIdFromName(std::string name);
+
+	PCB* getPCB(int ID);
+
+	//SCHEDULER
+	void Run();
+	void DisplayScheduler();
 	void Sleep(int ID);
 	void WakeUp(int ID);
-	PCB* getPCB(int ID);
+	void DeleteProcess(int ID);
+	void CreateProcess(std::string Name, std::string Path, int BasePriority);
 };

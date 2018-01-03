@@ -3,42 +3,46 @@
 #include<list>
 
 //Tworzenie nowego pola PCB
-void ProcessManagement::CreateProcess(std::string Name, std::string Path) {
+void ProcessManagement::CreateProcess(std::string Name, std::string Path, int BasePriority) {
+	int ID = ID_Manager.PickID();
 	PCB temp;
 	temp.state = PCB::processState::newbie;
 	temp.name = Name;
-	temp.ID = ID_Manager.PickID();
+	temp.ID = ID;
 	temp.A = 0;
 	temp.B = 0;
 	temp.C = 0;
 	temp.D = 0;
+	temp.basePriority = BasePriority;
 	temp.commandCounter = 0;
 	temp.blocked = 0;
 	temp.setState(PCB::processState::ready);
-	//temp.state = PCB::processState::ready;
 	Processes.push_back(temp);
+	scheduler.addProcess(this->getPCB(ID));
 	//TRZEBA JAKOŒ DODAC KOD PROGRAMU DO RAMU
+	//PATH OD MODU£U FAT
 }
-//Tworzenie pustego procesu 
-void ProcessManagement::CreateEmptyProcess(std::string Name) {
+//Tworzenie procesu bezczynnoœci
+void ProcessManagement::addFirstProcess(std::string path)
+{
+	int ID = ID_Manager.PickID();
 	PCB temp;
 	temp.state = PCB::processState::newbie;
-	temp.name = Name;
-	temp.ID = ID_Manager.PickID();
+	temp.name = "idle";
+	temp.ID = ID;
 	temp.A = 0;
 	temp.B = 0;
 	temp.C = 0;
 	temp.D = 0;
+	temp.basePriority = 0;
 	temp.commandCounter = 0;
+	temp.blocked = 0;
 	temp.setState(PCB::processState::ready);
-	//temp.state = PCB::processState::ready;
 	Processes.push_back(temp);
+	scheduler.addFirstProcess(this->getPCB(0));
+	//TRZEBA JAKOŒ DODAC KOD PROGRAMU DO RAMU
+}
 
-}
-//Tworzenie procesu bezczynnoœci
-void ProcessManagement::addFirstProcess() {
-	CreateEmptyProcess("idle");
-}
 //Usuwanie wybranego procesu z listy procesów
 void ProcessManagement::DeleteProcess(int ID) {
 	if(ID == 0) {
@@ -229,4 +233,18 @@ PCB * ProcessManagement::getPCB(int ID) {
 		}
 	}
 	return temp;
+}
+
+void ProcessManagement::DisplayScheduler()
+{
+	scheduler.displayActiveBitsMap();
+	scheduler.displayActiveProcesses();
+	scheduler.displayRunningProcess();
+	scheduler.displayTerminatedBitsMap();
+	scheduler.displayTerminatedProcesses();
+}
+
+void ProcessManagement::Run()
+{
+	scheduler.assignProcessor();
 }
