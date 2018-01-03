@@ -42,6 +42,7 @@ public:
 	bool isTerminatedEmpty();
 	void endOfEpoch();
 	void reschedProcess();
+	bool isActiveEmpty();
 
 	//METODY PRZEZNACZONE DO SHELLA
 	void displayActiveProcesses();

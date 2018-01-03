@@ -22,9 +22,6 @@ void Scheduler::addFirstProcess(PCB *process) {
 	Process newProcess = Process(process);
 	newProcess.process->priority = 15;
 
-	if (bitsMapActive[newProcess.process->priority] == 0) { bitsMapActive[process->priority] = 1; }
-	activeProcesses[newProcess.process->priority].push(newProcess);
-
 	giveTime(newProcess);
 	runningProcess = newProcess;
 }
@@ -44,15 +41,6 @@ void Scheduler::addProcess(PCB *process)
 
 	if (bitsMapActive[newProcess.process->priority] == 0) { bitsMapActive[process->priority] = 1; }
 	activeProcesses[newProcess.process->priority].push(newProcess);
-}
-
-//wydzielenie procesora
-void Scheduler::reschedProcess()
-{
-	if (bitsMapActive[runningProcess.process->priority] == 0) { bitsMapActive[runningProcess.process->priority] = 1; }
-	activeProcesses[runningProcess.process->priority].push(runningProcess);
-	runningProcess.setWaitingTime(0);
-	chooseProcess();
 }
 
 //Obliczanie priorytetu pierwszy raz
@@ -246,31 +234,44 @@ void Scheduler::chooseProcess()
 //Przydzial procesora do odpowiedniego procesu (procesor)
 void Scheduler::assignProcessor() // arg Interpreter &inter
 {
-	//Sprawdza czy nie trzeba zmienic procesu
-	if (needResched == 1)
+
+	if (runningProcess.process->name == "idle" && !isTerminatedEmpty() && !isActiveEmpty())
 	{
-		reschedProcess();
+		// run(); //proces bezczynnosci
 	}
+	else{
+		//Sprawdza czy nie trzeba zmienic procesu
+		if (needResched == 1)
+		{
+			reschedProcess();
+		}
 
-	//Sprawdza czy nie czas na zmiane epoki
-	if (runningProcess.process->priority == 15 && isTerminatedEmpty())
-	{
-		endOfEpoch();
-		reschedProcess();
+		//Sprawdza czy nie czas na zmiane epoki
+		if (runningProcess.process->priority == 15 && isTerminatedEmpty())
+		{
+			endOfEpoch();
+			reschedProcess();
+		}
+
+		// runningProcess.decRestTime();
+
+		if (runningProcess.getRestTime() == 0)
+		{
+			if (runningProcess.process->priority != 15) terminated(runningProcess);
+
+		}
+
+		// incWaitingTime();
 	}
+}
 
-	
-
-	runningProcess.decRestTime();
-
-	if (runningProcess.getRestTime() == 0)
-	{
-		if(runningProcess.process->priority!=15) terminated(runningProcess);
-		
-	}
-
-	incWaitingTime();
-
+//wydzielenie procesora
+void Scheduler::reschedProcess()
+{
+	if (bitsMapActive[runningProcess.process->priority] == 0) { bitsMapActive[runningProcess.process->priority] = 1; }
+	activeProcesses[runningProcess.process->priority].push(runningProcess);
+	runningProcess.setWaitingTime(0);
+	chooseProcess();
 }
 
 //Inkrementowanie pola waitingTime dla odpowiednich procesow
@@ -320,6 +321,18 @@ void Scheduler::terminated(Process &process)
 //Funkcja sprawdzajaca czy w tablicy procesow przeterminowanych jest pusto
 bool Scheduler::isTerminatedEmpty() {
 	for (auto e : bitsMapTerminated)
+	{
+		if (e == 1)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+//Funkcja sprawdzajaca czy w tablicy procesow actywnej jest pusto
+bool Scheduler::isActiveEmpty() {
+	for (auto e : bitsMapActive)
 	{
 		if (e == 1)
 		{
