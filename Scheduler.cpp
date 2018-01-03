@@ -43,6 +43,37 @@ void Scheduler::addProcess(PCB *process)
 	activeProcesses[newProcess.process->priority].push(newProcess);
 }
 
+//Dodawanie do procesow aktywnych
+void Scheduler::unsleep(int ID) 
+{
+	for (int i= 0; i<waitingProcesses.size(); i++)
+	{
+		if (waitingProcesses[i].process->ID == ID) 
+		{
+			if (bitsMapActive[waitingProcesses[i].process->priority] == 0) { bitsMapActive[waitingProcesses[i].process->priority] = 1; }
+			activeProcesses[waitingProcesses[i].process->priority].push(waitingProcesses[i]);
+
+			waitingProcesses.erase(waitingProcesses.begin+i);
+		}
+	}
+
+}
+
+//Dodawanie do procesow waiting
+void Scheduler::sleep(int ID) {
+	for (auto e : activeProcesses)
+	{
+			auto process = e.front();
+			if (process.process->ID == ID)
+			{
+				e.pop();
+				waitingProcesses.push_back(process);
+				break;
+			}
+	}
+
+}
+
 //Obliczanie priorytetu pierwszy raz
 void Scheduler::calculateCurrentPriority(Process &process) {
 	unsigned int rest = process.getRestTime(), waiting = process.getWaitingTime(), need = process.getAllNeedTime();
@@ -426,6 +457,6 @@ void Scheduler::displayTerminatedBitsMap() {
 	std::cout << std::endl;
 }
 void Scheduler::displayRunningProcess() {
-	std::cout << "Proces aktualnie posiadajacy procesor: " << runningProcess.process->name << " pozostaly kwant: " << runningProcess.getRestTime() << std::endl;
+	std::cout << "Proces aktualnie posiadajacy procesor: " << runningProcess.process->name << " pozostaly kwant: " << runningProcess.getRestTime() << " i priorytecie " << runningProcess.process->priority<< std::endl;
 }
 

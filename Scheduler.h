@@ -24,6 +24,9 @@ protected:
 	//Wektor bitowy procesow przeterminowanch (ulatwiajacy i przyspieszajacy operacje na wektorach kolejek)
 	std::array <bool, 16> bitsMapTerminated;
 
+	//Procesy waiting
+	std::vector <Process> waitingProcesses;
+
 public:
 
 	Scheduler();
@@ -31,6 +34,8 @@ public:
 	void addProcess(PCB *process);
 	void assignProcessor();
 	void deleteProcess(Process &process);
+	void unsleep(int ID);
+	void sleep(int ID);
 
 	void calculateFirstTimeCurrentPriority(Process &process);
 	void calculateCurrentPriority(Process &process);
