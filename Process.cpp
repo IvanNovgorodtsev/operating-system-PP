@@ -12,6 +12,9 @@ Process::Process(PCB* process)
 void Process::incWaitingTime() {
 	waitingTime++;
 }
+void Process::decRestTime() {
+	this->restTime--;
+}
 
 void Process::setRestTime(unsigned int time)
 {

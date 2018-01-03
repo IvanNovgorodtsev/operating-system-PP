@@ -226,17 +226,12 @@ void Scheduler::assignProcessor() // arg Interpreter &inter
 	//	}
 	//
 
-	unsigned int restTime = runningProcess.getRestTime();
-	restTime--;
+	runningProcess.decRestTime();
 
-	if (restTime == 0)
+	if (runningProcess.getRestTime() == 0)
 	{
 		terminated(runningProcess);
 		chooseProcess();
-	}
-	else
-	{
-		runningProcess.setRestTime(restTime);
 	}
 
 	incWaitingTime();
@@ -270,6 +265,7 @@ void Scheduler::incWaitingTime() {
 		}
 	}
 }
+
 
 //Wrzucenie procesow aktywnych ktore wykorzystaly swoj kwant czasu do procesow przeterminowanych
 //Przeliczenie ponowne priorytetu, nadanie mu odpowiedniego kwantu czasu
@@ -382,6 +378,6 @@ void Scheduler::displayTerminatedBitsMap() {
 	std::cout << std::endl;
 }
 void Scheduler::displayRunningProcess() {
-	std::cout << "Proces aktualnie posiadajacy procesor: " << runningProcess.process->name << std::endl;
+	std::cout << "Proces aktualnie posiadajacy procesor: " << runningProcess.process->name << " pozostaly kwant: " << runningProcess.getRestTime() << std::endl;
 }
 

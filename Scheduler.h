@@ -29,17 +29,19 @@ public:
 	Scheduler();
 	void addFirstProcess(PCB *process);
 	void addProcess(PCB *process);
+	void assignProcessor();
+	void deleteProcess(Process &process);
+
 	void calculateFirstTimeCurrentPriority(Process &process);
 	void calculateCurrentPriority(Process &process);
 	void translate(Process &process);
 	void giveTime(Process &process);
-	void deleteProcess(Process &process);
 	void chooseProcess();
-	void assignProcessor();
 	void incWaitingTime();
 	void terminated(Process &process);
 	bool isTerminatedEmpty();
 	void endOfEpoch();
+	
 
 	//METODY PRZEZNACZONE DO SHELLA
 	void displayActiveProcesses();

@@ -17,6 +17,7 @@ public:
 	Process(PCB* process);
 
 	void incWaitingTime();
+	void decRestTime();
 
 	void setRestTime(unsigned int time);
 	void setWaitingTime(unsigned int time);
