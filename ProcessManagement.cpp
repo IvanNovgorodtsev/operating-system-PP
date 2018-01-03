@@ -1,9 +1,6 @@
 #include "ProcessManagement.h"
-#include "Scheduler.h"
 #include<string>
 #include<list>
-
-
 
 //Tworzenie nowego pola PCB
 void ProcessManagement::CreateProcess(std::string Name, std::string Path) {

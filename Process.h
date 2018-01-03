@@ -1,5 +1,5 @@
 #pragma once
-#include "ProcessManagement.h"
+#include "PCB.h"
 
 // Klasa Process skladajaca sie z pola PCB (proces), restTime (pozostaly kwant czasu), waitingTime (czas ktory oczekuje na kwant czasu)
 // allNeedTime (czas potrzebny do pelnego wykonania programu)

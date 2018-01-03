@@ -5,7 +5,7 @@
 #include<list>
 #include"ID_Manager.h"
 #include "PCB.h"
-
+#include "Scheduler.h"
 
 class ProcessManagement {
 private:
