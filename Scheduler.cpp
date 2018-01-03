@@ -36,17 +36,17 @@ void Scheduler::addProcess(PCB *process)
 	Process newProcess = Process(process);
 	calculateFirstTimeCurrentPriority(newProcess);
 
-	if (bitsMapActive[newProcess.process->priority] == 0) { bitsMapActive[process->priority] = 1; }
-	activeProcesses[newProcess.process->priority].push(newProcess);
-
-
 	if (newProcess.process->priority < runningProcess.process->priority)
 	{
 		needResched = 1;
 	}
 	giveTime(newProcess);
+
+	if (bitsMapActive[newProcess.process->priority] == 0) { bitsMapActive[process->priority] = 1; }
+	activeProcesses[newProcess.process->priority].push(newProcess);
 }
 
+//wydzielenie procesora
 void Scheduler::reschedProcess()
 {
 	if (bitsMapActive[runningProcess.process->priority] == 0) { bitsMapActive[runningProcess.process->priority] = 1; }
@@ -74,9 +74,7 @@ void Scheduler::calculateFirstTimeCurrentPriority(Process &process)
 	translate(process);
 
 	if (process.getWaitingTime() > process.getAllNeedTime()) {
-		if (process.process->priority > 8) {
-			process.process->priority--;
-		}
+		
 	}
 }
 
