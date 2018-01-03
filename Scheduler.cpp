@@ -34,7 +34,7 @@ void Scheduler::addFirstProcess(PCB *process) {
 void Scheduler::addProcess(PCB *process)
 {
 	Process newProcess = Process(process);
-	calculateCurrentPriority(newProcess);
+	calculateFirstTimeCurrentPriority(newProcess);
 
 	if (bitsMapActive[newProcess.process->priority] == 0) { bitsMapActive[process->priority] = 1; }
 	activeProcesses[newProcess.process->priority].push(newProcess);
@@ -50,7 +50,7 @@ void Scheduler::addProcess(PCB *process)
 //Obliczanie priorytetu pierwszy raz
 void Scheduler::calculateCurrentPriority(Process &process) {
 	unsigned int rest = process.getRestTime(), waiting = process.getWaitingTime(), need = process.getAllNeedTime();
-	if (process.getWaitingTime > process.getAllNeedTime) {
+	if (process.getWaitingTime() > process.getAllNeedTime()) {
 		if (process.process->priority > 8) {
 			process.process->priority--;
 		}
@@ -64,7 +64,7 @@ void Scheduler::calculateFirstTimeCurrentPriority(Process &process)
 
 	translate(process);
 
-	if (process.getWaitingTime > process.getAllNeedTime) {
+	if (process.getWaitingTime() > process.getAllNeedTime()) {
 		if (process.process->priority > 8) {
 			process.process->priority--;
 		}
