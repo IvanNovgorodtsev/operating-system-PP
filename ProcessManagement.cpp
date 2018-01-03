@@ -3,11 +3,11 @@
 #include<list>
 
 //Tworzenie nowego pola PCB
-void ProcessManagement::CreateProcess(std::string Name, std::string Path, int BasePriority) {
+int ProcessManagement::CreateProcess(std::string Name, std::string Path, int BasePriority) {
 	if (CheckNameUniqe(Name))
 	{
 		//B£¥D, POWIELONA NAZWA
-	//	std::cout << "powielona nazwa procesu" << std::endl;
+		return -1;
 	}
 	else
 	{
@@ -27,7 +27,7 @@ void ProcessManagement::CreateProcess(std::string Name, std::string Path, int Ba
 		Processes.push_back(temp);
 		SetState(ID, PCB::processState::ready);
 	}
-
+	return 0;
 	//TRZEBA JAKOŒ DODAC KOD PROGRAMU DO RAMU
 	//PATH - NAZWA LUB SCIEZKA PLIKU ZRODLOWEGO
 
@@ -86,7 +86,8 @@ void ProcessManagement::DeleteProcess(int ID) {
 	}
 }
 //Pobieranie stanu wybranego procesu
-PCB::processState ProcessManagement::GetState(int ID) {
+PCB::processState ProcessManagement::GetState(int ID) 
+{
 	for(std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter) {
 		if(iter->ID == ID) {
 			return iter->state;
@@ -259,6 +260,7 @@ void ProcessManagement::Sleep(int ID) {
 	for(std::list<PCB>::iterator iter = Processes.begin(); iter != Processes.end(); ++iter) {
 		if(iter->ID == ID) {
 			iter->sleep();
+			scheduler.sleep(ID);
 			break;
 		}
 	}

@@ -13,5 +13,3 @@ void PCB::sleep() {
 void PCB::wakeup() {
 	this->blocked = 0;
 }
-
-//void PCB::setState(PCB::processState newState){}

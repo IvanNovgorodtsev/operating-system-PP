@@ -41,5 +41,5 @@ public:
 	void Sleep(int ID);
 	void WakeUp(int ID);
 	void DeleteProcess(int ID);
-	void CreateProcess(std::string Name, std::string Path, int BasePriority);
+	int CreateProcess(std::string Name, std::string Path, int BasePriority);
 };
