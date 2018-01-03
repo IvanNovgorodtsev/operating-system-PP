@@ -247,7 +247,7 @@ void Scheduler::assignProcessor() // arg Interpreter &inter
 		}
 
 		//Sprawdza czy nie czas na zmiane epoki
-		if (runningProcess.process->priority == 15 && isTerminatedEmpty())
+		if (runningProcess.process->name == "idle" && isTerminatedEmpty())
 		{
 			endOfEpoch();
 			reschedProcess();
@@ -261,7 +261,7 @@ void Scheduler::assignProcessor() // arg Interpreter &inter
 
 		}
 
-		// incWaitingTime();
+		incWaitingTime();
 	}
 }
 
