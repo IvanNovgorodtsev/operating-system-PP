@@ -47,6 +47,14 @@ void Scheduler::addProcess(PCB *process)
 	giveTime(newProcess);
 }
 
+void Scheduler::reschedProcess()
+{
+	if (bitsMapActive[runningProcess.process->priority] == 0) { bitsMapActive[runningProcess.process->priority] = 1; }
+	activeProcesses[runningProcess.process->priority].push(runningProcess);
+	runningProcess.setWaitingTime(0);
+	chooseProcess();
+}
+
 //Obliczanie priorytetu pierwszy raz
 void Scheduler::calculateCurrentPriority(Process &process) {
 	unsigned int rest = process.getRestTime(), waiting = process.getWaitingTime(), need = process.getAllNeedTime();
@@ -135,67 +143,67 @@ void Scheduler::giveTime(Process &process)
 	switch (process.process->priority)
 	{
 	case 0: {
-		process.setRestTime(16);
+		process.setRestTime(17);
 		break;
 	}
 	case 1: {
-		process.setRestTime(15);
+		process.setRestTime(16);
 		break;
 	}
 	case 2: {
-		process.setRestTime(14);
+		process.setRestTime(15);
 		break;
 	}
 	case 3: {
-		process.setRestTime(13);
+		process.setRestTime(14);
 		break;
 	}
 	case 4: {
-		process.setRestTime(12);
+		process.setRestTime(13);
 		break;
 	}
 	case 5: {
-		process.setRestTime(11);
+		process.setRestTime(12);
 		break;
 	}
 	case 6: {
-		process.setRestTime(10);
+		process.setRestTime(11);
 		break;
 	}
 	case 7: {
-		process.setRestTime(9);
+		process.setRestTime(10);
 		break;
 	}
 	case 8: {
-		process.setRestTime(8);
+		process.setRestTime(9);
 		break;
 	}
 	case 9: {
-		process.setRestTime(7);
+		process.setRestTime(8);
 		break;
 	}
 	case 10: {
-		process.setRestTime(6);
+		process.setRestTime(7);
 		break;
 	}
 	case 11: {
-		process.setRestTime(5);
+		process.setRestTime(6);
 		break;
 	}
 	case 12: {
-		process.setRestTime(4);
+		process.setRestTime(5);
 		break;
 	}
 	case 13: {
-		process.setRestTime(3);
+		process.setRestTime(4);
 		break;
 	}
 	case 14: {
-		process.setRestTime(2);
+		process.setRestTime(3);
 		break;
 	}
 	case 15: {
-		process.setRestTime(1);
+		process.setRestTime(2);
 		break;
 	}
 	default:
@@ -243,27 +251,24 @@ void Scheduler::assignProcessor() // arg Interpreter &inter
 	//Sprawdza czy nie trzeba zmienic procesu
 	if (needResched == 1)
 	{
-		chooseProcess();
+		reschedProcess();
 	}
 
 	//Sprawdza czy nie czas na zmiane epoki
 	if (runningProcess.process->priority == 15 && isTerminatedEmpty())
 	{
 		endOfEpoch();
-		chooseProcess();
+		reschedProcess();
 	}
 
-	//if(!bool run(runningProcess.process)){ // na wszystkie funkcje nizej
-	//	delete(runningProcess.process);
-	//	}
-	//
+	
 
 	runningProcess.decRestTime();
 
 	if (runningProcess.getRestTime() == 0)
 	{
-		terminated(runningProcess);
-		chooseProcess();
+		if(runningProcess.process->priority!=15) terminated(runningProcess);
+		
 	}
 
 	incWaitingTime();
@@ -362,7 +367,7 @@ void Scheduler::displayActiveProcesses()
 			auto process = e.front();
 			e.pop();
 
-			std::cout << "Proces o nazwie: " << process.process->name << std::endl;
+			std::cout << "Proces o nazwie: " << process.process->name << " i kwancie czasu: " << process.getRestTime() << std::endl;
 		}
 	}
 }

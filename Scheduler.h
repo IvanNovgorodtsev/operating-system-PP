@@ -41,7 +41,7 @@ public:
 	void terminated(Process &process);
 	bool isTerminatedEmpty();
 	void endOfEpoch();
-	
+	void reschedProcess();
 
 	//METODY PRZEZNACZONE DO SHELLA
 	void displayActiveProcesses();
