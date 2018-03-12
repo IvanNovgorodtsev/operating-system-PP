@@ -1,10 +1,13 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "plikiFAT.h"
 #include "ProcessManagement.h"
+#include "PCB.h"
+#include "Scheduler.h"
+#include "plikiFAT.h"
+#include "Komunikacja.h"
+#include "RAM.h"
 using namespace std;
-
 enum Rozkazy {
 	AD, // AD A B					(dodaje do rejestrA zawartoœæ rejestrB) +
 	AX, // AX A 10					(dodaje liczby do rejestru) +
@@ -22,6 +25,7 @@ enum Rozkazy {
 	DF, // DF nazwa_pliku			(usuwa plik o danej nazwie)
 	RF, // RF nazwa_pliku treœæ
 	AF, // AF nazwa_pliku treœæ     (nadpisuje plik o danej nazwie)
+	FC, // FileClose nazwa
 	CP, // CP nazwa sciezka			(tworzenie procesu)
 	DP, // DP nazwa
 	RP, // RP nazwa
@@ -39,15 +43,22 @@ Rozkazy convert(const string& operacja);
 class Interpreter
 {
 private:
+	int label;
 	bool isLabel(string &program);
-	// private PCB PCBbox; <--- PCBbox przechowuje nazwe procesu
-	// private RAM ram;    <--- nasze rozkazy
-	Disc disc; //<--- pliki
-	// ProcessManagement processmanagement; //<--- proces
-	// Komunikacja komunikacja; <--- komunikacja
+	RAM *ram;
+	Disc *disc; //<--- pliki
+	ProcessManagement *processmanagement; //<--- proces
+	Komunikacja *komunikacja; // <--- komunikacja
 	Rozkazy rozkaz;
 	string program; // rozkaz pobierany z ramu
 public:
-	bool run(string &program);
-	Interpreter(/*RAM &ram, FileSystem &filesystem, ProcessManagement &processmanagement*/);
+	void run(PCB* PCBbox);
+	Interpreter() {}
+	Interpreter(ProcessManagement* pm, Komunikacja* km, Disc* dc, RAM *ram)
+	{
+		this->processmanagement = pm;
+		this->komunikacja = km;
+		this->disc = dc;
+		this->ram = ram;
+	}
 };

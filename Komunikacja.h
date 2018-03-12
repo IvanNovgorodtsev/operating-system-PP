@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Mutex.h"
+#include "ProcessManagement.h"
 
 using namespace std;
 
@@ -23,12 +24,28 @@ struct mkfifo
 		{
 			fifo << msg;
 		}
-		else
-			cout << "Blad zapisu do pliku" << endl;
 		fifo.close();
 	}
-	void odczytaj()
+	//void odczytaj()
+	//{
+	//	ifstream fifo(sciezka);
+	//	string linia;
+	//	if (fifo.is_open())
+	//	{
+	//		while (getline(fifo, linia))
+	//		{
+	//			temp += linia;
+	//		}
+	//	}
+	//	else
+	//		cout << "Blad odczytania z pliku" << endl;
+	//	cout << temp;
+	//	cout << endl;
+	//	fifo.close();
+	//}
+	string odczytaj(int iloscz)
 	{
+		string temp3;
 		ifstream fifo(sciezka);
 		string linia;
 		if (fifo.is_open())
@@ -38,30 +55,12 @@ struct mkfifo
 				temp += linia;
 			}
 		}
-		else
-			cout << "Blad odczytania z pliku" << endl;
-		cout << temp;
-		cout << endl;
-		fifo.close();
-	}
-	void odczytaj(int iloscz)
-	{
-		ifstream fifo(sciezka);
-		string linia;
-		if (fifo.is_open())
-		{
-			while (getline(fifo, linia))
-			{
-				temp += linia;
-			}
-		}
-		else
-			cout << "Blad odczytania z pliku" << endl;
-		for (int i = 0; i < iloscz; i++)
-			cout << temp[i];
-		cout << endl;
+		temp3 = temp;
+		temp3=temp3.substr(0,iloscz);
+
 		temp = temp.substr(iloscz, temp.size());
 		fifo.close();
+		return temp3;
 	}
 };
 
@@ -70,13 +69,14 @@ class Komunikacja
 {
 public:
 	ProcessManagement * Proces;
-	Mutex* lock;
+	Mutex lock;
 public:
+	Komunikacja();
 	Komunikacja(ProcessManagement *Proces);
 	vector<string> tab;
-	mkfifo mkfifo;
+	mkfifo mkfif;
 	void write(string id, string msg);
-	void read(string id);
-	void read(string id, int iloscz);
+	//void read(string id);
+	string read(string id, int iloscz);
 };
 

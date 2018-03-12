@@ -1,19 +1,15 @@
-#include "Scheduler.h"
-
-#pragma once
 #include <array>
 #include <queue>
 #include <iostream>
 #include <string>
 #include "Scheduler.h"
 
-//BARDZO WAZNA RZECZ TRZEBA DODAC RECZNIE PROCES BEZCZYNNOSCI
-
-//Konstruktor wyzerowanie mapy bitowej
+//Konstruktor wyzerowanie map bitowych i znaczniki needResched i lastTerminated
 Scheduler::Scheduler() {
 	bitsMapActive.fill(0);
 	bitsMapTerminated.fill(0);
 	needResched = 0;
+	lastTerminated = 0;
 }
 
 //Dodawanie procesu bezczynnosci
@@ -26,12 +22,12 @@ void Scheduler::addFirstProcess(PCB *process) {
 	runningProcess = newProcess;
 }
 
-//Dodawanie procesu do kolejki procesow (przez zarzadzanie procesami), odpowiednie ustawienie mapy bitowej i nadanie kwantu czasu 
+//Dodawanie procesu do kolejki procesow, odpowiednie ustawienie mapy bitowej i nadanie kwantu czasu 
 //Jesli nowy proces ma priorytet wyzszy to zostaje ustawiony znacznik needResched
-void Scheduler::addProcess(PCB *process)
+void Scheduler::addProcess(PCB *process, unsigned int allNeedTime)
 {
 	Process newProcess = Process(process);
-	calculateFirstTimeCurrentPriority(newProcess);
+	calculateFirstTimeCurrentPriority(newProcess, allNeedTime);
 
 	if (newProcess.process->priority < runningProcess.process->priority)
 	{
@@ -43,62 +39,16 @@ void Scheduler::addProcess(PCB *process)
 	activeProcesses[newProcess.process->priority].push(newProcess);
 }
 
-//Dodawanie do procesow aktywnych
-void Scheduler::unsleep(int ID) 
-{
-	for (int i= 0; i<waitingProcesses.size(); i++)
-	{
-		if (waitingProcesses[i].process->ID == ID) 
-		{
-			if (bitsMapActive[waitingProcesses[i].process->priority] == 0) { bitsMapActive[waitingProcesses[i].process->priority] = 1; }
-			activeProcesses[waitingProcesses[i].process->priority].push(waitingProcesses[i]);
-
-			//waitingProcesses.erase(waitingProcesses.begin+i);
-		}
-	}
-
-}
-
-//Dodawanie do procesow waiting
-void Scheduler::sleep(int ID) {
-	for (auto e : activeProcesses)
-	{
-			auto process = e.front();
-			if (process.process->ID == ID)
-			{
-				e.pop();
-				waitingProcesses.push_back(process);
-				break;
-			}
-	}
-
-}
-
 //Obliczanie priorytetu pierwszy raz
-void Scheduler::calculateCurrentPriority(Process &process) {
-	unsigned int rest = process.getRestTime(), waiting = process.getWaitingTime(), need = process.getAllNeedTime();
-	
-	if (process.getWaitingTime() > process.getAllNeedTime()) {
-		if (process.process->priority > 8) {
-			process.process->priority--;
-		}
-	}
-}
-
-//Obliczanie aktualnego priorytetu (kazdorazowo po zakonczeniu kwantu czasu, przez proces)
-void Scheduler::calculateFirstTimeCurrentPriority(Process &process)
+void Scheduler::calculateFirstTimeCurrentPriority(Process &process, unsigned int allNeedTime)
 {
-	unsigned int rest = process.getRestTime(), waiting = process.getWaitingTime(), need = process.getAllNeedTime();
+	process.setAllNeedTime(allNeedTime);
+	translatePriority(process);
 
-	translate(process);
-
-	if (process.getWaitingTime() > process.getAllNeedTime()) {
-		
-	}
 }
 
 //Mapowanie z windowsowych priorytetow na Linuxowe
-void Scheduler::translate(Process &process)
+void Scheduler::translatePriority(Process &process)
 {
 	switch (process.process->basePriority)
 	{
@@ -153,90 +103,50 @@ void Scheduler::translate(Process &process)
 	}
 }
 
-//UZUPELNIC DLUGOSC PROGRAMU robi sie
 //Nadawanie kwantu czasu
 void Scheduler::giveTime(Process &process)
 {
-	switch (process.process->priority)
-	{
-	case 0: {
-		process.setRestTime(16);
-		break;
+	if (process.process->priority < 8) {
+		process.setRestTime(process.getAllNeedTime());
 	}
-	case 1: {
-		process.setRestTime(15);
-		break;
-	}
-	case 2: {
-		process.setRestTime(14);
-		break;
-	}
-	case 3: {
-		process.setRestTime(13);
-		break;
-	}
-	case 4: {
-		process.setRestTime(12);
-		break;
-	}
-	case 5: {
-		process.setRestTime(11);
-		break;
-	}
-	case 6: {
-		process.setRestTime(10);
-		break;
-	}
-	case 7: {
-		process.setRestTime(9);
-		break;
-	}
-	case 8: {
-		process.setRestTime(8);
-		break;
-	}
-	case 9: {
-		process.setRestTime(7);
-		break;
-	}
-	case 10: {
-		process.setRestTime(6);
-		break;
-	}
-	case 11: {
-		process.setRestTime(5);
-		break;
-	}
-	case 12: {
-		process.setRestTime(4);
-		break;
-	}
-	case 13: {
-		process.setRestTime(3);
-		break;
-	}
-	case 14: {
-		process.setRestTime(2);
-		break;
-	}
-	case 15: {
-		process.setRestTime(1);
-		break;
-	}
-	default:
-		//UZUPELNIC O DLUGOSC PROGRAMU
-		process.setRestTime(1);
-		break;
-	}
+	else {
+		switch (process.process->priority)
+		{
+		case 8: {
+			process.setRestTime(8);
+			break;
+		}
+		case 9: {
+			process.setRestTime(7);
+			break;
+		}
+		case 10: {
+			process.setRestTime(6);
+			break;
+		}
+		case 11: {
+			process.setRestTime(5);
+			break;
+		}
+		case 12: {
+			process.setRestTime(4);
+			break;
+		}
+		case 13: {
+			process.setRestTime(3);
+			break;
+		}
+		case 14: {
+			process.setRestTime(2);
+			break;
+		}
+		case 15: {
+			process.setRestTime(1);
+			break;
+		}
+		}
 
-}
-
-//FUNKCJA USUWANIA PROCESU OD ADAMA
-//Usuniecie procesu z kolejki procesow (przez zarzadzanie procesami)
-void Scheduler::deleteProcess(Process &process)
-{
-	//USUN ADAM TEN PROCES
-	//JA GO NIE MAM W KOLEJCE WIEC "ZAPOMINAM" O NIM
+	}
 }
 
 //wybieranie procesu do dzialania, wyciaganie go z kolejki i zwracanie
@@ -262,91 +172,126 @@ void Scheduler::chooseProcess()
 	runningProcess = choice;
 }
 
-//Przydzial procesora do odpowiedniego procesu (procesor)
-void Scheduler::assignProcessor() // arg Interpreter &inter
-{
-
-	if (runningProcess.process->name == "idle" && !isTerminatedEmpty() && !isActiveEmpty())
-	{
-		// run(); //proces bezczynnosci
-	}
-	else{
-		//Sprawdza czy nie trzeba zmienic procesu
-		if (needResched == 1)
-		{
-			reschedProcess();
-		}
-
-		//Sprawdza czy nie czas na zmiane epoki
-		if (runningProcess.process->name == "idle" && isTerminatedEmpty())
-		{
-			endOfEpoch();
-			reschedProcess();
-		}
-
-		runningProcess.decRestTime();
-
-		if (runningProcess.getRestTime() == 0)
-		{
-			 terminated(runningProcess);
-			 chooseProcess();
-		}
-
-		incWaitingTime();
-	}
-}
-
-//wydzielenie procesora
+//wydziedziczenie procesora
 void Scheduler::reschedProcess()
 {
 	if (bitsMapActive[runningProcess.process->priority] == 0) { bitsMapActive[runningProcess.process->priority] = 1; }
 	activeProcesses[runningProcess.process->priority].push(runningProcess);
-	runningProcess.setWaitingTime(0);
 	chooseProcess();
+	needResched = 0;
 }
 
-//Inkrementowanie pola waitingTime dla odpowiednich procesow
-void Scheduler::incWaitingTime() {
+//Zwraca proces ktory otrzymal procesor 
+unsigned int Scheduler::assignProcessor()
+{
+	unsleep();
 
-	auto copyQueue = activeProcesses;
-	for (auto e : copyQueue)
-	{
-		while (!e.empty())
+	//gdy running to idle + pusta active + pusta terminated
+	if (!isTerminatedEmpty() && !isActiveEmpty()) {
+		return runningProcess.process->ID;
+	}
+	else {
+		// gdy running to idle + pusta active  + nie pusta terminated
+		// koncze epoke i wydziedziczam proces idle
+		if (!isActiveEmpty())
 		{
-			auto process = e.front();
-			e.pop();
+			endOfEpoch();
+			reschedProcess();
 
-			process.incWaitingTime();
+			runningProcess.decRestTime();
+			if (runningProcess.getRestTime() == 0) {
+				auto actualRunningID = runningProcess.process->ID;
+				terminated();
+				chooseProcess();
+				return actualRunningID;
+			}
+
+			return runningProcess.process->ID;
+		}
+		else // gdy active nie jest pusta
+		{
+			if (needResched == 1) {
+				reschedProcess();
+			}
+
+			//gdy trafia na process o statusie waiting
+			while (runningProcess.process->state == PCB::processState::waiting)
+			{
+				sleep(runningProcess);
+				chooseProcess();
+			}
+			//gdy wszystkie waiting minal i jest pusta active
+			if (!isActiveEmpty())
+			{
+				endOfEpoch();
+				reschedProcess();
+
+				runningProcess.decRestTime();
+				if (runningProcess.getRestTime() == 0) {
+					auto actualRunningID = runningProcess.process->ID;
+					terminated();
+					chooseProcess();
+					return actualRunningID;
+				}
+
+				return runningProcess.process->ID;
+			}
+
+			// gdy trafiony proces nie jest waiting
+			runningProcess.decRestTime();
+
+			if (runningProcess.getRestTime() == 0) {
+				auto actualRunningID = runningProcess.process->ID;
+				terminated();
+				chooseProcess();
+				return actualRunningID;
+			}
+
+			return runningProcess.process->ID;
 		}
 	}
 
-	copyQueue = terminatedProcesses;
-	for (auto e : copyQueue)
-	{
-		while (!e.empty())
-		{
-			auto process = e.front();
-			e.pop();
-
-			process.incWaitingTime();
-		}
-	}
 }
 
+
+//Dodawanie do procesow aktywnych z tablicy waitingProcesses, odpowiednie uzupelnienie bitsMapActive, usuwanie procesu z tablicy waiting
+//Funkcja wykorzystuje wlasnosc iz numer ID jest unikalny i po trafieniu konczy dzialanie petli
+void Scheduler::unsleep()
+{
+	for (int i = 0; i < waitingProcesses.size(); i++)
+	{
+		if (waitingProcesses[i].process->state == PCB::processState::ready)
+		{
+			activeProcesses[waitingProcesses[i].process->priority].push(waitingProcesses[i]);
+			bitsMapActive[waitingProcesses[i].process->priority] = 1;
+
+			if (waitingProcesses[i].process->priority < runningProcess.process->priority) {
+				needResched = 1;
+			}
+
+			waitingProcesses.erase(waitingProcesses.begin() + i);
+		}
+	}
+
+}
+
+//Dodawanie do procesow waiting
+void Scheduler::sleep(Process &process)
+{
+	waitingProcesses.push_back(process);
+}
 
 //Wrzucenie procesow aktywnych ktore wykorzystaly swoj kwant czasu do procesow przeterminowanych
 //Przeliczenie ponowne priorytetu, nadanie mu odpowiedniego kwantu czasu
-void Scheduler::terminated(Process &process)
+void Scheduler::terminated()
 {
-	calculateCurrentPriority(process);
-	giveTime(process);
-	process.setWaitingTime(0);
+	giveTime(runningProcess);
 
-	if (bitsMapTerminated[process.process->priority] == 0)
+	if (bitsMapTerminated[runningProcess.process->priority] == 0)
 	{
-		bitsMapTerminated[process.process->priority] = 1;
+		bitsMapTerminated[runningProcess.process->priority] = 1;
 	}
-	terminatedProcesses[process.process->priority].push(process);
+	terminatedProcesses[runningProcess.process->priority].push(runningProcess);
 }
 
 //Funkcja sprawdzajaca czy w tablicy procesow przeterminowanych jest pusto
@@ -390,15 +335,119 @@ void Scheduler::endOfEpoch()
 	}
 
 	//Czyszczenie mapy bitowej
-	for (auto e : bitsMapTerminated) {
+	for (auto &e : bitsMapTerminated)
+	{
 		e = 0;
 	}
 }
 
+//Usuniecie procesu z kolejki procesow (przez zarzadzanie procesami)
+void Scheduler::deleteProcess(unsigned int ID)
+{
+	if (runningProcess.process->ID == ID) {
+		chooseProcess();
+	}
+	else {
+		deleteActiveProcess(ID);
+		deleteTerminatedProcess(ID);
+		deleteWaitingProcess(ID);
+	}
+}
+
+//Przeszukiwanie i usuniecie z tablicy procesow aktywnych procesu o podanym ID
+void Scheduler::deleteActiveProcess(unsigned int ID) {
+	for (int i = 0; i < activeProcesses.size(); i++)
+	{
+		if (!activeProcesses[i].empty())
+		{
+			if (activeProcesses[i].front().process->ID == ID)
+			{
+				auto beginQueue = activeProcesses[i].front();
+				activeProcesses[i].pop();
+				if (activeProcesses[i].empty()) {
+					bitsMapActive[i] = 0;
+				}
+				break;
+
+			}
+			else {
+				auto beginQueue = activeProcesses[i].front();
+				activeProcesses[i].pop();
+				activeProcesses[i].push(beginQueue);
+				while (beginQueue.process->ID != activeProcesses[i].front().process->ID)
+				{
+					if (ID == activeProcesses[i].front().process->ID) {
+						activeProcesses[i].pop();
+						break;
+					}
+					else
+					{
+						auto  element = activeProcesses[i].front();
+						activeProcesses[i].pop();
+						activeProcesses[i].push(element);
+					}
+				}
+			}
+		}
+	}
+}
+
+//Przeszukiwanie i usuniecie z tablicy procesow przetermiowanych procesu o podanym ID
+void Scheduler::deleteTerminatedProcess(unsigned int ID) {
+	for (int i = 0; i < terminatedProcesses.size(); i++)
+	{
+		if (!terminatedProcesses[i].empty())
+		{
+			if (terminatedProcesses[i].front().process->ID == ID)
+			{
+				auto beginQueue = terminatedProcesses[i].front();
+				terminatedProcesses[i].pop();
+				if (terminatedProcesses[i].empty()) {
+					bitsMapTerminated[i] = 0;
+				}
+				break;
+			}
+			else {
+				auto beginQueue = terminatedProcesses[i].front();
+				terminatedProcesses[i].pop();
+				terminatedProcesses[i].push(beginQueue);
+				while (beginQueue.process->ID != terminatedProcesses[i].front().process->ID)
+				{
+					if (ID == terminatedProcesses[i].front().process->ID) {
+						terminatedProcesses[i].pop();
+						break;
+					}
+					else
+					{
+						auto  element = terminatedProcesses[i].front();
+						terminatedProcesses[i].pop();
+						terminatedProcesses[i].push(element);
+					}
+				}
+			}
+		}
+	}
+}
+
+//Przeszukiwanie i usuniecie z tablicy procesow waiting procesu o podanym ID
+void Scheduler::deleteWaitingProcess(unsigned int ID)
+{
+	for (int i = 0; i < waitingProcesses.size(); i++)
+	{
+		if (ID == waitingProcesses[i].process->ID)
+		{
+			waitingProcesses.erase(waitingProcesses.begin() + i);
+			break;
+		}
+	}
+
+}
+
+
 //METODY PRZEZNACZONE DO SHELLA
 void Scheduler::displayActiveProcesses()
 {
-	std::cout << "Lista procesow aktywnych:" << std::endl;
+	std::cout << "ACTIVE:" << std::endl;
 	auto copyActiveProcesses = activeProcesses;
 
 	for (auto e : copyActiveProcesses)
@@ -409,29 +458,29 @@ void Scheduler::displayActiveProcesses()
 			auto process = e.front();
 			e.pop();
 
-			std::cout << "Proces o nazwie: " << process.process->name << " i kwancie czasu: " << process.getRestTime() << std::endl;
+			std::cout << process.process->display() << " kwant: " << process.getRestTime() << std::endl;
 		}
 	}
 }
 void Scheduler::displayTerminatedProcesses() {
 
-	std::cout << "Lista procesow przeterminowanych:" << std::endl;
+	std::cout << "TERMINATED:" << std::endl;
 	auto copyTerminatedProcesses = terminatedProcesses;
 
 	for (auto e : copyTerminatedProcesses)
 	{
-		if (!e.empty()) std::cout << " Procesy o priorytecie " << e.front().process->priority << ":" << std::endl;
+		if (!e.empty()) std::cout << "Procesy o priorytecie " << e.front().process->priority << ":" << std::endl;
 		while (!e.empty())
 		{
 			auto process = e.front();
 			e.pop();
 
-			std::cout << "Proces o nazwie: " << process.process->name << std::endl;
+			std::cout << "NAME: " << process.process->name << " KWANT: " << process.getRestTime() << std::endl;
 		}
 	}
 }
 void Scheduler::displayActiveBitsMap() {
-	std::cout << "MB procesow aktywnych:  " ;
+	std::cout << "ACTIVE BITS MAP:  ";
 	for (int i = 1; i < bitsMapActive.size() + 1; i++)
 	{
 		if (i % 4 == 0) {
@@ -444,7 +493,7 @@ void Scheduler::displayActiveBitsMap() {
 	std::cout << std::endl;
 }
 void Scheduler::displayTerminatedBitsMap() {
-	std::cout << "MB procesow przeterminowanych:" ;
+	std::cout << "TERMINATED BITS MAP:";
 	for (int i = 1; i < bitsMapTerminated.size() + 1; i++)
 	{
 		if (i % 4 == 0) {
@@ -457,6 +506,23 @@ void Scheduler::displayTerminatedBitsMap() {
 	std::cout << std::endl;
 }
 void Scheduler::displayRunningProcess() {
-	std::cout << "Aktualnie posiadajacy procesor: " << runningProcess.process->name << " pozostaly kwant: " << runningProcess.getRestTime() << " i priorytecie " << runningProcess.process->priority<< std::endl;
+	std::cout << "PROCESOR: " << runningProcess.process->name << " KWANT: " << runningProcess.getRestTime() << " PRIORITY " << runningProcess.process->priority << std::endl;
 }
+void Scheduler::displayWaitingProcesses() {
+	std::cout << "WAITING:" << std::endl;
 
+	for (auto e : waitingProcesses)
+	{
+		std::cout << "NAME: " << e.process->name << " KWANT: " << e.getRestTime() << std::endl;
+	}
+}
+void Scheduler::displayAll() {
+	displayActiveProcesses();
+	displayActiveBitsMap();
+	displayTerminatedProcesses();
+	displayTerminatedBitsMap();
+	displayWaitingProcesses();
+	displayRunningProcess();
+	std::cout << "Resched: " << needResched << std::endl;
+	std::cout << std::endl;
+}

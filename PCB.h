@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <iostream>
 
@@ -11,7 +12,7 @@ public:
 	}
 	PCB() {}
 
-	enum processState { newbie, waiting, ready, active, finished };
+	enum processState { newbie, waiting, ready, active, finished, err };
 	std::string name;
 	int ID;
 	processState state;
@@ -23,7 +24,10 @@ public:
 	int B;
 	int C;
 	int D;
-	void print();
-	void sleep();
-	void wakeup();
+
+	void Sleep();
+	void WakeUp();
+	std::string displayState();
+	std::string display();
+
 };
